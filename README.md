@@ -1,5 +1,24 @@
-## Usage
+## GH Metrics
 
+Analyze some metrics around a window of time from a github repo, as i want to track Pull requests as a means of measuring team and project harmony.
+
+Looking at
+
+number of PRs
+time they sat open for pending review
+number of distinct contributors
+(using labels) what kind of PR and how many were external
+
+## Current
+
+- using python 3.9
+- requirements.txt includes
+    - yaml
+    - pandas
+    - PyGithub
+
+
+## Usage
 Run the script using Python and pass the required and optional arguments as flags:
 
 ```
@@ -23,15 +42,11 @@ Analyze PRs from the past two weeks (using defaults for start and end date):
     python script.py --config config.yaml --auth-token YOUR_GITHUB_TOKEN
 ```
 
-
-
 ### Analyze PRs from specific dates:
 
 ```python
     python script.py --config config.yaml --start-date 2023-01-01 --end-date 2023-01-15 --auth-token YOUR_GITHUB_TOKEN
 ```
-
-
 
 ### Output
 
