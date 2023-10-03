@@ -1,0 +1,5 @@
+# update to your user or organization name
+repo_owner: "MyUserOrOrganization"
+
+# the repo name
+repo_name: "MyRepo"
