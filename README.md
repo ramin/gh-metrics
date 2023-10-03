@@ -2,19 +2,18 @@
 
 Run the script using Python and pass the required and optional arguments as flags:
 
-
-
 ```
 python script.py --config CONFIG_PATH --auth-token GITHUB_TOKEN [--start-date START_DATE] [--end-date END_DATE]
 ```
 
-
-
+```
 Flags:
     --config CONFIG_PATH: Path to the YAML configuration file. (required)
     --auth-token GITHUB_TOKEN: Your GitHub personal access token. (required)
     --start-date START_DATE: The start date for the analysis in the "YYYY-MM-DD" format. (optional, default is 2 weeks ago from the current date)
     --end-date END_DATE: The end date for the analysis in the "YYYY-MM-DD" format. (optional, default is the current date)
+```
+
 
 ## Example:
 
@@ -38,6 +37,9 @@ Analyze PRs from the past two weeks (using defaults for start and end date):
 
 The script outputs JSON data with the following metrics:
 
+    average_pr_open_time: Average time a PR was open
+    counts_per_day: PRs opened each day
+    open: Remaining OPEN PRs from period
     pr_count: Total number of PRs.
     distinct_contributors: Number of unique contributors.
     label_distribution: Distribution of labels across PRs.
