@@ -22,9 +22,6 @@ def get_repo_data_all_time(g, repo_owner, repo_name):
 
     for pr in prs:
         pr_created_at = pr.created_at.replace(tzinfo=None)
-        pr_closed_at = pr.closed_at.replace(
-            tzinfo=None) if pr.closed_at else None  # Only non-None if PR is closed
-
         pr_data.append({
             "title": pr.title,
             "number": pr.number,
@@ -172,6 +169,7 @@ def main():
                         default=default_end_date)
     parser.add_argument("--absolute",
                         help="ignore the window and calculate for repo since eternity (long)",
+                        action="store_true",
                         default=False)
 
 
@@ -190,6 +188,7 @@ def main():
     # args absolute will generate stats for the repo
     # for all time
     if args.absolute:
+        print("running total stats")
         pr_df = get_repo_data_all_time(
             g,
             repo_owner,
@@ -197,6 +196,7 @@ def main():
         )
     ## absolute false will generate stats for the given window
     else:
+        print("running windowed stats")
         start_date = datetime.strptime(args.start_date, "%Y-%m-%d")
         end_date = datetime.strptime(args.end_date, "%Y-%m-%d")
 
