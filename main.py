@@ -12,6 +12,30 @@ def read_config(config_path):
         config = yaml.safe_load(file)
     return config['repo_owner'], config['repo_name']
 
+def get_repo_data_all_time(g, repo_owner, repo_name):
+    repo = g.get_repo(f"{repo_owner}/{repo_name}")
+
+    prs = repo.get_pulls(state='all', base='main',
+                         sort='created', direction='desc')
+
+    pr_data = []
+
+    for pr in prs:
+        pr_created_at = pr.created_at.replace(tzinfo=None)
+        pr_closed_at = pr.closed_at.replace(
+            tzinfo=None) if pr.closed_at else None  # Only non-None if PR is closed
+
+        pr_data.append({
+            "title": pr.title,
+            "number": pr.number,
+            "contributor": pr.user.login,
+            "created_at": pr_created_at,
+            "closed_at": pr.closed_at,
+            "open_time": None if pr.closed_at is None else pr.closed_at - pr.created_at,
+            "labels": [label.name for label in pr.labels],
+        })
+
+    return pd.DataFrame(pr_data)
 
 def get_pr_data(g, repo_owner, repo_name, start_date, end_date):
     maxPrs = 1000
@@ -146,6 +170,10 @@ def main():
     parser.add_argument("--end-date",
                         help="End date (YYYY-MM-DD)",
                         default=default_end_date)
+    parser.add_argument("--absolute",
+                        help="ignore the window and calculate for repo since eternity (long)",
+                        default=False)
+
 
     args = parser.parse_args()
 
@@ -157,16 +185,29 @@ def main():
 
     g = Github(token)
 
-    start_date = datetime.strptime(args.start_date, "%Y-%m-%d")
-    end_date = datetime.strptime(args.end_date, "%Y-%m-%d")
+    pr_df = pd.DataFrame()
 
-    pr_df = get_pr_data(
-        g,
-        repo_owner,
-        repo_name,
-        start_date,
-        end_date
-    )
+    # args absolute will generate stats for the repo
+    # for all time
+    if args.absolute:
+        pr_df = get_repo_data_all_time(
+            g,
+            repo_owner,
+            repo_name
+        )
+    ## absolute false will generate stats for the given window
+    else:
+        start_date = datetime.strptime(args.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(args.end_date, "%Y-%m-%d")
+
+        pr_df = get_pr_data(
+            g,
+            repo_owner,
+            repo_name,
+            start_date,
+            end_date
+        )
+
 
     analysis_result = analyze_pr_data(pr_df)
 
